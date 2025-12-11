@@ -10,7 +10,6 @@ from torch.utils.tensorboard import SummaryWriter
 import matplotlib.pyplot as plt
 import os, sys, math
 
-sys.path.append('./code')
 from ECGdataset import ECGDataset
 from net1d import Net1D
 
