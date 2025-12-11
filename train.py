@@ -326,8 +326,8 @@ if __name__ == "__main__":
         'EPOCHS': 100,
         'LEARNING_RATE': 3e-5,
         'RANDOM_SEED': 42,
-        'MODEL_PATH': './checkpoint', 
-        'TENSORBOARD_LOG_DIR': './logs', 
+        'MODEL_PATH': './outputs/checkpoint', 
+        'TENSORBOARD_LOG_DIR': './outputs/logs', 
         'PRETRAINED_MODEL_PATH': './1m-epoch15.pth',
     }
     
