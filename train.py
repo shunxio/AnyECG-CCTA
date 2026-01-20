@@ -55,8 +55,6 @@ def pcgrad_step(model, task_losses, optimizer):
         for p, g in zip(params, grads):
             p.grad.add_(g / len(per_task_grads))
 
-    optimizer.step()
-
 
 def build_warmup_cosine_scheduler(optimizer, warmup_steps, total_steps, min_lr_ratio=0.01):
     def lr_lambda(step):
@@ -196,7 +194,6 @@ def run_fold_training(train_df, test_df, fold_num, config):
             weighted_losses = [precision[i] * task_losses[i] for i in range(4)]
             pcgrad_step(model, weighted_losses, optimizer)
 
-            optimizer.zero_grad(set_to_none=True)
             loss_vars = torch.sum(torch.exp(-uw.log_vars) * task_losses.detach()) + uw.reg_term()
             loss_vars.backward()
             optimizer.step()
