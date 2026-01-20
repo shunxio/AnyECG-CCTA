@@ -19,15 +19,11 @@ and supports **longitudinal risk stratification**, **decision curve analysis**, 
 
 ## Key Contributions
 
-### 1. We developed an explainable AI-ECG model capable of directly predicting CCTA-defined severe coronary artery stenosis and total occlusion from ECG signals. Model discrimination and calibration were systematically evaluated using receiver operating characteristic (ROC) curve analysis, statistical comparisons of predicted probability distributions across stenosis severities, and calibration curves.
-
-### 2. We demonstrated that the model maintains stable performance in individuals with apparently normal ECGs, highlighting its potential application in assisting the screening and identification of occult CAD in populations lacking obvious electrocardiographic abnormalities
-
-### 3. By combining model-predicted probabilities with epidemiological incidence rates, we performed vascular-specific risk stratification and assessed the cumulative risk of myocardial infarction based on Kaplan–Meier curves, thereby enabling a longitudinal assessment of the risk of future coronary events.
-
-### 4. Through sensitivity analyses across a range of decision thresholds, we identified operating points at which the model may support opportunistic screening in clinical settings.
-
-### 5. Through explainable analyses, we characterized ECG waveform differences between model-defined high-risk and low-risk populations, providing insights into electrophysiological patterns associated with coronary artery stenosis and informing clinical interpretation.
+1.  **End-to-End Prediction**: Developed an explainable AI-ECG model capable of directly predicting CCTA-defined severe coronary artery stenosis and total occlusion from raw ECG signals.
+2.  **Occult CAD Screening**: Demonstrated that the model maintains stable performance in individuals with **apparently normal ECGs**, highlighting its potential for screening occult CAD in asymptomatic populations.
+3.  **Risk Stratification**: Combined model predictions with epidemiological data to assess the cumulative risk of myocardial infarction (via Kaplan–Meier curves), enabling longitudinal risk assessment.
+4.  **Clinical Utility**: Identified optimal operating points through sensitivity analyses to support opportunistic screening in clinical settings.
+5.  **Explainability**: Characterized ECG waveform differences between high-risk and low-risk populations to provide electrophysiological insights into coronary artery stenosis.
 
 ---
 
@@ -91,7 +87,7 @@ project_root/
     ├── checkpoints/          # Saved model weights
     ├── logs/                 # Training logs
     └── figures/              # ROC, KM, DCA, waveform visualizations
-
+```
 ---
 
 ## Workflow Overview
