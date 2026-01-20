@@ -1,101 +1,96 @@
 # Fine-tuning an ECG Foundation Model to Predict Coronary CT Angiography Outcomes
 
-## Table of Contents
+## Overview
 
-* [Introduction](#introduction)
-* [Key Contributions](#key-contributions)
-* [Model Performance](#model-performance)
-* [Model Architecture & Training Strategy](#model-architecture--training-strategy)
-* [Project Structure](#project-structure)
-* [Workflow Overview](#workflow-overview)
-* [Data Format](#data-format)
-* [Running the Project](#running-the-project)
-* [Training Example](#training-example)
-* [Citation](#citation)
+This repository provides the official implementation of an **explainable AI-enabled electrocardiography (AI-ECG) system** for **vessel-level prediction of severe coronary artery stenosis and total occlusion**, using **12-lead ECG signals** with **coronary CT angiography (CCTA)** as the reference standard.
 
----
+By fine-tuning **ECGFounder**, a large-scale ECG base model, which we then fine-tuned on independent datasets for the new myocardial infarction task, this project demonstrates that AI-ECG can serve as a **non-invasive, low-cost, and scalable screening tool** for identifying **occult coronary artery disease (CAD)**, even among individuals with **clinically normal ECGs**.
 
-## Introduction
+The model outputs **continuous risk probabilities** for the four major coronary arteries:
 
-This repository presents an **interpretable AI-ECG model** designed to directly predict **severe stenosis** or **complete occlusion** of the four major coronary arteries — **RCA, LM, LAD, LCX** — as defined by **coronary CT angiography (CCTA)**, using only 12-lead ECG signals.
+- Right coronary artery (**RCA**)
+- Left main coronary artery (**LM**)
+- Left anterior descending artery (**LAD**)
+- Left circumflex artery (**LCX**)
 
-By fine-tuning **ECGFounder**, the world’s largest ECG foundation model, the project demonstrates AI-ECG's potential as a **non-invasive, low-cost screening tool** for occult CAD, even among patients with clinically normal ECGs.
+and supports **longitudinal risk stratification**, **decision curve analysis**, and **waveform-level interpretability**.
 
 ---
 
 ## Key Contributions
 
-### 1. Direct prediction of vessel-level CCTA lesions
+### 1. We developed an explainable AI-ECG model capable of directly predicting CCTA-defined severe coronary artery stenosis and total occlusion from ECG signals. Model discrimination and calibration were systematically evaluated using receiver operating characteristic (ROC) curve analysis, statistical comparisons of predicted probability distributions across stenosis severities, and calibration curves.
 
-The first interpretable AI-ECG system capable of **direct vessel-specific prediction** of severe stenosis or complete occlusion.
+### 2. We demonstrated that the model maintains stable performance in individuals with apparently normal ECGs, highlighting its potential application in assisting the screening and identification of occult CAD in populations lacking obvious electrocardiographic abnormalities
 
-### 2. Screening for occult CAD
+### 3. By combining model-predicted probabilities with epidemiological incidence rates, we performed vascular-specific risk stratification and assessed the cumulative risk of myocardial infarction based on Kaplan–Meier curves, thereby enabling a longitudinal assessment of the risk of future coronary events.
 
-The model maintains strong performance in the **normal ECG subgroup**, revealing underlying disease patterns.
+### 4. Through sensitivity analyses across a range of decision thresholds, we identified operating points at which the model may support opportunistic screening in clinical settings.
 
-### 3. Dynamic risk stratification
-
-Combining predicted risk with incidence curves enables **prospective coronary event risk stratification**.
-
-### 4. Waveform-level interpretability
-
-Waveform comparison highlights **key electrophysiological regions** that differentiate high-risk vs. low-risk groups.
+### 5. Through explainable analyses, we characterized ECG waveform differences between model-defined high-risk and low-risk populations, providing insights into electrophysiological patterns associated with coronary artery stenosis and informing clinical interpretation.
 
 ---
 
 ## Model Performance
 
-AUC scores across internal, external, and normal-ECG validation.
+### Discrimination Performance (AUC)
 
-| Vessel  | Internal AUC | External AUC | Normal-ECG AUC |
-| ------- | ------------ | ------------ | -------------- |
-| **RCA** | 0.794        | 0.749        | 0.793          |
-| **LM**  | 0.818        | 0.971        | 0.896          |
-| **LAD** | 0.744        | 0.667        | 0.707          |
-| **LCX** | 0.755        | 0.727        | 0.765          |
+| Vessel | Internal Validation | External Validation | Normal-ECG Subgroup |
+|------|-------------------|-------------------|-------------------|
+| **RCA** | 0.744 | 0.714 | 0.693 |
+| **LM**  | 0.706 | 0.713 | 0.659 |
+| **LAD** | 0.716 | 0.700 | 0.673 |
+| **LCX** | 0.736 | 0.673 | 0.716 |
 
-> Note: LM performance may be inflated due to low lesion prevalence.
+> **Note**: LM performance should be interpreted cautiously due to extremely low lesion prevalence (~0.1%), consistent with real-world epidemiology.
 
 ---
 
 ## Model Architecture & Training Strategy
 
 ### Foundation Model
-
-* **ECGFounder**, pretrained for myocardial infarction prediction.
+- **ECGFounder**: large-scale ECG foundation model pretrained on >10 million ECG recordings.
 
 ### Backbone Network
-
-* Modified **Net1D** for ECG representation.
+- Modified **Net1D** architecture for 12-lead ECG representation learning.
 
 ### Multi-Task Learning
-
-Joint prediction of the four arteries to enhance shared feature extraction.
+Simultaneous prediction of four coronary arteries using a shared encoder.
 
 ### Optimization Techniques
+- Uncertainty-based adaptive task weighting
+- PCGrad (Projected Conflicting Gradient)
+- AdamW optimizer with warmup and cosine decay
+- Online ECG data augmentation:
+  - Temporal shifting
+  - Amplitude scaling
+  - Gaussian noise injection
+  - Local signal occlusion
 
-* **Uncertainty-based adaptive task weighting**
-* **PCGrad** to resolve gradient conflicts in multi-task training
+### Cross-Validation Strategy
+- Five-fold stratified grouped cross-validation
+- Patient ID used as grouping variable
+- Best checkpoint selected by validation macro-AUC
 
 ---
 
 ## Project Structure
 
-```
+```text
 project_root/
 ├── train.py                  # Main training script
-├── requirements.txt          # Dependencies
-├── README.md                 # Documentation
+├── analysis.ipynb            # Evaluation code
+├── requirements.txt          # Python dependencies
+├── README.md                 # Project documentation
 ├── data/
-│   ├── sample.csv/           # The input model files are listed, with the ECG file path column indicating the corresponding .npy files. ECG data should be 500Hz and 10 seconds in length.
+│   └── sample.csv            # Example input table with ECG paths and labels
 ├── Utils/
-│   ├── net1d.py              # Model network
-│   ├── ECGDataset.py         # Dataset
+│   ├── net1d.py              # ECG backbone network
+│   ├── ECGDataset.py         # Dataset and preprocessing
 └── outputs/
-    ├── checkpoints/          # Saved models
+    ├── checkpoints/          # Saved model weights
     ├── logs/                 # Training logs
-    └── figures/              # Visualization outputs
-```
+    └── figures/              # ROC, KM, DCA, waveform visualizations
 
 ---
 
@@ -110,7 +105,7 @@ ECGFounder
     ↓
 Risk Prediction
     ↓
-Interpretability (waveform analysis)
+Explainability (waveform analysis)
 ```
 
 ---
