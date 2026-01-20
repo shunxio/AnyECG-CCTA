@@ -19,15 +19,15 @@ and supports **longitudinal risk stratification**, **decision curve analysis**, 
 
 ## Key Contributions
 
-###1. End-to-End Prediction
+### 1. End-to-End Prediction
 Developed an explainable AI-ECG model capable of directly predicting CCTA-defined severe coronary artery stenosis and total occlusion from raw ECG signals.
-###2. Occult CAD Screening
+### 2. Occult CAD Screening
 Demonstrated that the model maintains stable performance in individuals with **apparently normal ECGs**, highlighting its potential for screening occult CAD in asymptomatic populations.
-###3. Risk Stratification
+### 3. Risk Stratification
 Combined model predictions with epidemiological data to assess the cumulative risk of myocardial infarction (via Kaplan–Meier curves), enabling longitudinal risk assessment.
-###4. Clinical Utility
+### 4. Clinical Utility
 Identified optimal operating points through sensitivity analyses to support opportunistic screening in clinical settings.
-###5. Explainability
+### 5. Explainability
 Characterized ECG waveform differences between high-risk and low-risk populations to provide electrophysiological insights into coronary artery stenosis.
 
 ---
